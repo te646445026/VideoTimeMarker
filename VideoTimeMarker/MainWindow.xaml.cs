@@ -84,6 +84,24 @@ namespace VideoTimeMarker
             }
 
             var startTime = StartDatePicker.SelectedDate.Value.Add(time.TimeOfDay);
+            if (!int.TryParse(FontSizeTextBox.Text, out var fontSize) || fontSize <= 0)
+            {
+                MessageBox.Show("请输入有效的字体大小", "提示", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
+            if (!int.TryParse(WatermarkXTextBox.Text, out var x) || x < 0)
+            {
+                MessageBox.Show("请输入有效的X坐标", "提示", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
+            if (!int.TryParse(WatermarkYTextBox.Text, out var y) || y < 0)
+            {
+                MessageBox.Show("请输入有效的Y坐标", "提示", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
             var outputPath = System.IO.Path.Combine(
                 System.IO.Path.GetDirectoryName(_selectedVideoPath)!,
                 $"{System.IO.Path.GetFileNameWithoutExtension(_selectedVideoPath)}_watermarked{System.IO.Path.GetExtension(_selectedVideoPath)}"
@@ -101,7 +119,7 @@ namespace VideoTimeMarker
                 ProcessingProgressBar.Visibility = Visibility.Visible;
                 ProcessingStatusText.Visibility = Visibility.Visible;
                 ProcessingProgressBar.Value = 0;
-                var result = await _ffmpegService.AddDynamicTimeWatermark(_selectedVideoPath, outputPath, startTime, _videoDuration);
+                var result = await _ffmpegService.AddDynamicTimeWatermark(_selectedVideoPath, outputPath, startTime, _videoDuration, fontSize, x, y);
                 _isProcessing = false;
                 ProcessingProgressBar.Visibility = Visibility.Collapsed;
                 ProcessingStatusText.Visibility = Visibility.Collapsed;

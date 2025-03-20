@@ -27,7 +27,7 @@ namespace VideoTimeMarker.Services
         /// <summary>
         /// 添加动态时间水印
         /// </summary>
-        public async Task<int> AddDynamicTimeWatermark(string inputFile, string outputFile, DateTime startTime, TimeSpan duration)
+        public async Task<int> AddDynamicTimeWatermark(string inputFile, string outputFile, DateTime startTime, TimeSpan duration, int fontSize = 45, int x = 20, int y = 20)
         {
             // 计算结束时间
             var endTime = startTime.Add(duration);
@@ -45,9 +45,9 @@ namespace VideoTimeMarker.Services
             var totalSeconds = durationInfo.TotalSeconds;
 
             // 构建FFmpeg命令，使用drawtext filter添加动态时间水印
-            var command = $"-i \"{inputFile}\" -vf \"drawtext=fontfile=arial.ttf:fontsize=60:fontcolor=red:" +
+            var command = $"-i \"{inputFile}\" -vf \"drawtext=fontfile=arial.ttf:fontsize={fontSize}:fontcolor=red:" +
                 $"text='%{{pts\\:localtime\\:{new DateTimeOffset(startTime).ToUnixTimeSeconds()}}}'" +
-                $":x=10:y=10\" -c:a copy \"{outputFile}\"";
+                $":x={x}:y={y}\" -c:a copy \"{outputFile}\"";
 
             OnProgressChanged(0, "开始处理视频...");
                 

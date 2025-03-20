@@ -23,6 +23,6 @@ namespace VideoTimeMarker.Services
         /// <param name="startTime">水印起始时间</param>
         /// <param name="duration">视频时长</param>
         /// <returns>处理结果代码</returns>
-        Task<int> AddDynamicTimeWatermark(string inputFile, string outputFile, DateTime startTime, TimeSpan duration);
+        Task<int> AddDynamicTimeWatermark(string inputFile, string outputFile, DateTime startTime, TimeSpan duration, int fontSize = 40, int x = 18, int y = 18);
     }
 }

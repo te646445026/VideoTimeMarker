@@ -43,19 +43,46 @@
 
         <!-- 水印设置 -->
         <Grid Grid.Row="4">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="Auto"/>
-            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
 
-            <TextBlock Text="起始时间：" VerticalAlignment="Center"/>
-            <DatePicker x:Name="StartDatePicker" Grid.Column="1" Margin="5,0"/>
-            <TextBlock Text="时间：" Grid.Column="2" VerticalAlignment="Center" Margin="10,0"/>
-            <TextBox x:Name="StartTimePicker" Grid.Column="3" Margin="5,0"/>
-            <Button Grid.Column="4" Content="添加水印" Width="80" Click="OnAddWatermarkClick"/>
+            <!-- 第一行：时间设置 -->
+            <Grid Grid.Row="0" Margin="0,0,0,10">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <TextBlock Text="起始时间：" VerticalAlignment="Center"/>
+                <DatePicker x:Name="StartDatePicker" Grid.Column="1" Margin="5,0"/>
+                <TextBlock Text="时间：" Grid.Column="2" VerticalAlignment="Center" Margin="10,0"/>
+                <TextBox x:Name="StartTimePicker" Grid.Column="3" Margin="5,0"/>
+            </Grid>
+
+            <!-- 第二行：水印设置 -->
+            <Grid Grid.Row="1">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="80"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="80"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="80"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <TextBlock Text="字体大小：" VerticalAlignment="Center"/>
+                <TextBox x:Name="FontSizeTextBox" Grid.Column="1" Margin="5,0" Text="40"/>
+                <TextBlock Text="X坐标：" Grid.Column="2" VerticalAlignment="Center" Margin="10,0"/>
+                <TextBox x:Name="WatermarkXTextBox" Grid.Column="3" Margin="5,0" Text="18"/>
+                <TextBlock Text="Y坐标：" Grid.Column="4" VerticalAlignment="Center" Margin="10,0"/>
+                <TextBox x:Name="WatermarkYTextBox" Grid.Column="5" Margin="5,0" Text="18"/>
+                <Button Grid.Column="6" Content="添加水印" Width="80" Click="OnAddWatermarkClick" Margin="10,0,0,0"/>
+            </Grid>
         </Grid>
     </Grid>
 </Window>
