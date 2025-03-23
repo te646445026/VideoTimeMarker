@@ -54,9 +54,38 @@ namespace VideoTimeMarker.Services
             return await ExecuteCommandAsync(inputFile, command);
         }
 
+        public async Task<int> CropVideo(string inputFile, string outputFile, int width, int height, int x, int y)
+        {
+            // 修改输出文件名，添加裁剪信息
+            var fileInfo = new System.IO.FileInfo(outputFile);
+            var directory = fileInfo.DirectoryName;
+            var fileNameWithoutExt = System.IO.Path.GetFileNameWithoutExtension(outputFile);
+            var extension = fileInfo.Extension;
+            var timeStamp = DateTime.Now.ToString("yyyyMMdd_HHmmss");
+            outputFile = System.IO.Path.Combine(directory!, $"{fileNameWithoutExt}_crop_{timeStamp}{extension}");
+
+            // 获取视频信息以确定原始尺寸
+            var videoInfo = await GetVideoInfoAsync(inputFile);
+            if (!videoInfo.HasValue)
+            {
+                throw new Exception("无法获取视频信息");
+            }
+
+            var (videoWidth, videoHeight) = videoInfo.Value;
+
+            // 构建FFmpeg命令，使用crop滤镜裁剪选中区域
+            var command = $"-i \"{inputFile}\" -vf \"crop={width}:{height}:{x}:{y}\" -c:a copy \"{outputFile}\"";
+
+            OnProgressChanged(0, "开始裁剪视频（保留选中区域的内容）...");
+
+            return await ExecuteCommandAsync(inputFile, command);
+        }
+
         /// <summary>
-        /// 执行FFmpeg命令
+        /// 获取视频时长
         /// </summary>
+        /// <param name="inputFile">输入视频文件路径</param>
+        /// <returns>视频时长</returns>
         private async Task<TimeSpan> GetVideoDurationAsync(string inputFile)
         {
             var process = new Process
@@ -78,13 +107,14 @@ namespace VideoTimeMarker.Services
                 process.WaitForExit();
 
                 // 解析FFmpeg输出以获取视频时长
-                var durationMatch = System.Text.RegularExpressions.Regex.Match(output, @"Duration: (\d{2}):(\d{2}):(\d{2})\.(\d{2})");
+                var durationMatch = System.Text.RegularExpressions.Regex.Match(output, @"Duration:\s*(\d+):(\d+):(\d+)\.(\d+)");
                 if (durationMatch.Success)
                 {
                     var hours = int.Parse(durationMatch.Groups[1].Value);
                     var minutes = int.Parse(durationMatch.Groups[2].Value);
                     var seconds = int.Parse(durationMatch.Groups[3].Value);
-                    var milliseconds = int.Parse(durationMatch.Groups[4].Value) * 10;
+                    var milliseconds = int.Parse(durationMatch.Groups[4].Value) * 10; // 转换为毫秒
+
                     return new TimeSpan(0, hours, minutes, seconds, milliseconds);
                 }
 
@@ -92,7 +122,47 @@ namespace VideoTimeMarker.Services
             }
             catch (Exception ex)
             {
-                throw new Exception($"获取视频时长失败：{ex.Message}");
+                throw new Exception($"获取视频信息失败：{ex.Message}");
+            }
+        }
+
+        /// <summary>
+        /// 获取视频信息（宽度和高度）
+        /// </summary>
+        private async Task<(int width, int height)?> GetVideoInfoAsync(string inputFile)
+        {
+            var process = new Process
+            {
+                StartInfo = new ProcessStartInfo
+                {
+                    FileName = FFmpegConfig.FFmpegPath,
+                    Arguments = $"-i \"{inputFile}\"",
+                    UseShellExecute = false,
+                    RedirectStandardError = true,
+                    CreateNoWindow = true
+                }
+            };
+
+            try
+            {
+                process.Start();
+                var output = await process.StandardError.ReadToEndAsync();
+                process.WaitForExit();
+
+                // 解析FFmpeg输出以获取视频尺寸
+                var videoSizeMatch = System.Text.RegularExpressions.Regex.Match(output, @"Stream.*Video.*\s(\d+)x(\d+)");
+                if (videoSizeMatch.Success)
+                {
+                    var width = int.Parse(videoSizeMatch.Groups[1].Value);
+                    var height = int.Parse(videoSizeMatch.Groups[2].Value);
+                    return (width, height);
+                }
+
+                return null;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"获取视频信息失败：{ex.Message}");
             }
         }
 

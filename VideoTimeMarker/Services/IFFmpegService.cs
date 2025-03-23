@@ -24,5 +24,17 @@ namespace VideoTimeMarker.Services
         /// <param name="duration">视频时长</param>
         /// <returns>处理结果代码</returns>
         Task<int> AddDynamicTimeWatermark(string inputFile, string outputFile, DateTime startTime, TimeSpan duration, int fontSize = 40, int x = 18, int y = 18);
+
+        /// <summary>
+        /// 裁剪视频
+        /// </summary>
+        /// <param name="inputFile">输入视频文件路径</param>
+        /// <param name="outputFile">输出视频文件路径</param>
+        /// <param name="width">裁剪宽度</param>
+        /// <param name="height">裁剪高度</param>
+        /// <param name="x">裁剪起始X坐标</param>
+        /// <param name="y">裁剪起始Y坐标</param>
+        /// <returns>处理结果代码</returns>
+        Task<int> CropVideo(string inputFile, string outputFile, int width, int height, int x, int y);
     }
 }
