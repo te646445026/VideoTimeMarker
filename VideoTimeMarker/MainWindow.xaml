@@ -83,6 +83,7 @@
                         <ColumnDefinition Width="Auto"/>
                         <ColumnDefinition Width="80"/>
                         <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
                     </Grid.ColumnDefinitions>
 
                     <TextBlock Text="字体大小：" VerticalAlignment="Center"/>
@@ -92,6 +93,7 @@
                     <TextBlock Text="Y坐标：" Grid.Column="4" VerticalAlignment="Center" Margin="10,0"/>
                     <TextBox x:Name="WatermarkYTextBox" Grid.Column="5" Margin="5,0" Text="18"/>
                     <Button Grid.Column="6" Content="添加水印" Width="80" Click="OnAddWatermarkClick" Margin="10,0,0,0"/>
+                <Button Grid.Column="7" Content="打开文件夹" Width="80" Click="OnOpenOutputFolderClick" Margin="10,0,0,0"/>
                 </Grid>
             </StackPanel>
         </Grid>
@@ -110,6 +112,7 @@
                     <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition Width="80"/>
                     <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
 
                 <TextBlock Text="裁剪宽度：" VerticalAlignment="Center"/>
@@ -121,6 +124,8 @@
                 <TextBlock Text="裁剪Y：" Grid.Column="6" VerticalAlignment="Center" Margin="10,0"/>
                 <TextBox x:Name="CropYTextBox" Grid.Column="7" Margin="5,0" Text="0"/>
                 <Button Grid.Column="8" Content="裁剪视频" Width="80" Click="OnCropVideoClick" Margin="10,0,0,0"/>
+                <Button Grid.Column="9" Content="打开文件夹" Width="80" Click="OnOpenOutputFolderClick" Margin="10,0,0,0"/>
+                <Button Grid.Column="10" Content="裁剪并添加水印" Width="120" Click="OnCropAndAddWatermarkClick" Margin="10,0,0,0"/>
             </Grid>
         </StackPanel>
     </Grid>

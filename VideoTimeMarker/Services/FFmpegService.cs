@@ -80,6 +80,36 @@ namespace VideoTimeMarker.Services
 
             return await ExecuteCommandAsync(inputFile, command);
         }
+        
+        public async Task<int> CropAndAddWatermark(string inputFile, string outputFile, int width, int height, int x, int y, DateTime startTime, TimeSpan duration, int fontSize = 40, int watermarkX = 18, int watermarkY = 18)
+        {
+            // 计算结束时间
+            var endTime = startTime.Add(duration);
+            
+            // 修改输出文件名，添加裁剪和时间戳信息
+            var fileInfo = new System.IO.FileInfo(outputFile);
+            var directory = fileInfo.DirectoryName;
+            var fileNameWithoutExt = System.IO.Path.GetFileNameWithoutExtension(outputFile);
+            var extension = fileInfo.Extension;
+            var timeStamp = startTime.ToString("yyyyMMdd_HHmmss");
+            outputFile = System.IO.Path.Combine(directory!, $"{fileNameWithoutExt}_crop_watermark_{timeStamp}{extension}");
+            
+            // 获取视频信息以确定原始尺寸
+            var videoInfo = await GetVideoInfoAsync(inputFile);
+            if (!videoInfo.HasValue)
+            {
+                throw new Exception("无法获取视频信息");
+            }
+            
+            // 构建FFmpeg命令，使用复合滤镜同时完成裁剪和添加水印
+            var command = $"-i \"{inputFile}\" -vf \"crop={width}:{height}:{x}:{y},drawtext=fontfile=arial.ttf:fontsize={fontSize}:fontcolor=red:" +
+                $"text='%{{pts\\:localtime\\:{new DateTimeOffset(startTime).ToUnixTimeSeconds()}}}'" +
+                $":x={watermarkX}:y={watermarkY}\" -c:a copy \"{outputFile}\"";
+
+            OnProgressChanged(0, "开始裁剪视频并添加水印...");
+            
+            return await ExecuteCommandAsync(inputFile, command);
+        }
 
         /// <summary>
         /// 获取视频时长

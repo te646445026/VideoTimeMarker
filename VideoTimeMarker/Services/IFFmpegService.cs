@@ -36,5 +36,22 @@ namespace VideoTimeMarker.Services
         /// <param name="y">裁剪起始Y坐标</param>
         /// <returns>处理结果代码</returns>
         Task<int> CropVideo(string inputFile, string outputFile, int width, int height, int x, int y);
+        
+        /// <summary>
+        /// 裁剪视频并添加动态时间水印
+        /// </summary>
+        /// <param name="inputFile">输入视频文件路径</param>
+        /// <param name="outputFile">输出视频文件路径</param>
+        /// <param name="width">裁剪宽度</param>
+        /// <param name="height">裁剪高度</param>
+        /// <param name="x">裁剪起始X坐标</param>
+        /// <param name="y">裁剪起始Y坐标</param>
+        /// <param name="startTime">水印起始时间</param>
+        /// <param name="duration">视频时长</param>
+        /// <param name="fontSize">水印字体大小</param>
+        /// <param name="watermarkX">水印X坐标</param>
+        /// <param name="watermarkY">水印Y坐标</param>
+        /// <returns>处理结果代码</returns>
+        Task<int> CropAndAddWatermark(string inputFile, string outputFile, int width, int height, int x, int y, DateTime startTime, TimeSpan duration, int fontSize = 40, int watermarkX = 18, int watermarkY = 18);
     }
 }
