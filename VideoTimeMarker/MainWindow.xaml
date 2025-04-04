@@ -92,14 +92,24 @@
                         <TextBlock Text="视频文件" Style="{StaticResource MaterialDesignHeadline6TextBlock}" Margin="0,0,0,16"/>
                         <TextBox x:Name="FilePathTextBox" IsReadOnly="True" Style="{StaticResource MaterialDesignOutlinedTextBox}" 
                                  materialDesign:HintAssist.Hint="视频文件路径" Margin="0,0,0,8"/>
-                        <Button Style="{StaticResource MaterialDesignOutlinedButton}" 
-                                materialDesign:ButtonAssist.CornerRadius="4"
-                                Click="OnSelectVideoClick" HorizontalAlignment="Right">
-                            <StackPanel Orientation="Horizontal">
-                                <materialDesign:PackIcon Kind="FileVideo" Margin="0,0,8,0"/>
-                                <TextBlock Text="选择视频"/>
-                            </StackPanel>
-                        </Button>
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                            <Button Style="{StaticResource MaterialDesignOutlinedButton}" 
+                                    materialDesign:ButtonAssist.CornerRadius="4"
+                                    Click="OnSelectVideoClick" Margin="0,0,8,0">
+                                <StackPanel Orientation="Horizontal">
+                                    <materialDesign:PackIcon Kind="FileVideo" Margin="0,0,8,0"/>
+                                    <TextBlock Text="选择视频"/>
+                                </StackPanel>
+                            </Button>
+                            <Button Style="{StaticResource MaterialDesignOutlinedButton}" 
+                                    materialDesign:ButtonAssist.CornerRadius="4"
+                                    Click="OnOpenOutputFolderClick">
+                                <StackPanel Orientation="Horizontal">
+                                    <materialDesign:PackIcon Kind="FolderOpen" Margin="0,0,8,0"/>
+                                    <TextBlock Text="打开文件夹"/>
+                                </StackPanel>
+                            </Button>
+                        </StackPanel>
                     </StackPanel>
                 </materialDesign:Card>
 
@@ -138,18 +148,10 @@
                         <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,16,0,0">
                             <Button Style="{StaticResource MaterialDesignOutlinedButton}" 
                                     materialDesign:ButtonAssist.CornerRadius="4"
-                                    Click="OnAddWatermarkClick" Margin="0,0,8,0">
+                                    Click="OnAddWatermarkClick">
                                 <StackPanel Orientation="Horizontal">
                                     <materialDesign:PackIcon Kind="Water" Margin="0,0,8,0"/>
                                     <TextBlock Text="添加水印"/>
-                                </StackPanel>
-                            </Button>
-                            <Button Style="{StaticResource MaterialDesignOutlinedButton}" 
-                                    materialDesign:ButtonAssist.CornerRadius="4"
-                                    Click="OnOpenOutputFolderClick">
-                                <StackPanel Orientation="Horizontal">
-                                    <materialDesign:PackIcon Kind="FolderOpen" Margin="0,0,8,0"/>
-                                    <TextBlock Text="打开文件夹"/>
                                 </StackPanel>
                             </Button>
                         </StackPanel>
