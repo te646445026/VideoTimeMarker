@@ -1,6 +1,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using System.Windows;
 using VideoTimeMarker.Services;
+using VideoTimeMarker.ViewModels;
 
 namespace VideoTimeMarker
 {
@@ -18,6 +19,7 @@ namespace VideoTimeMarker
         private void ConfigureServices(IServiceCollection services)
         {
             services.AddSingleton<IFFmpegService, FFmpegService>();
+            services.AddSingleton<MainWindowViewModel>();
             services.AddSingleton<MainWindow>();
         }
 
