@@ -1,0 +1,90 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:VideoTimeMarker.Avalonia.ViewModels"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:controls="using:Avalonia.Controls"
+        xmlns:ui="using:Avalonia.Controls"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="600"
+        x:Class="VideoTimeMarker.Avalonia.Views.MainWindow"
+        Title="视频水印工具"
+        Width="1000" Height="700"
+        WindowStartupLocation="CenterScreen">
+
+    <Window.Styles>
+        <Style Selector="HeaderedContentControl">
+            <Setter Property="Template">
+                <ControlTemplate>
+                    <Border BorderBrush="Gray" BorderThickness="1" CornerRadius="3" Padding="5" Margin="0,5">
+                        <Grid RowDefinitions="Auto,*">
+                            <TextBlock Grid.Row="0" Text="{TemplateBinding Header}" FontWeight="Bold" Margin="5,0,0,5"/>
+                            <ContentPresenter Grid.Row="1" Content="{TemplateBinding Content}"/>
+                        </Grid>
+                    </Border>
+                </ControlTemplate>
+            </Setter>
+        </Style>
+    </Window.Styles>
+
+    <Design.DataContext>
+        <vm:MainWindowViewModel/>
+    </Design.DataContext>
+
+    <Grid RowDefinitions="Auto,*,Auto">
+        <!-- 顶部工具栏 -->
+        <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="10" Spacing="10">
+            <Button Content="选择视频" Command="{Binding SelectVideoCommand}" />
+            <TextBox Text="{Binding FilePathText}" Width="400" IsReadOnly="True" />
+        </StackPanel>
+
+        <!-- 主要内容区域 -->
+        <Grid Grid.Row="1" ColumnDefinitions="*,300" Margin="10">
+            <!-- 视频预览区域 -->
+            <Border Grid.Column="0" BorderBrush="Gray" BorderThickness="1">
+                <Grid RowDefinitions="*,Auto">
+                    <Border Grid.Row="0" Name="VideoContainer" Background="Black">
+                        <!-- 视频播放控件将在代码中动态添加 -->
+                    </Border>
+                    <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,10,0,0" Spacing="10">
+                        <Button Content="播放" Command="{Binding PlayVideoCommand}" />
+                        <Button Content="暂停" Command="{Binding PauseVideoCommand}" />
+                        <Button Content="停止" Command="{Binding StopVideoCommand}" />
+                    </StackPanel>
+                </Grid>
+            </Border>
+
+            <!-- 右侧控制面板 -->
+            <StackPanel Grid.Column="1" Margin="10,0,0,0" Spacing="10">
+                <!-- 水印设置 -->
+                <HeaderedContentControl Header="水印设置">
+                    <StackPanel Spacing="10" Margin="5">
+                        <CalendarDatePicker SelectedDate="{Binding SelectedDate}" />
+                        <TextBox Text="{Binding StartTime}" Watermark="开始时间 (HH:mm:ss)" />
+                        <TextBox Text="{Binding FontSizeText}" Watermark="字体大小" />
+                        <TextBox Text="{Binding WatermarkXText}" Watermark="水印X坐标" />
+                        <TextBox Text="{Binding WatermarkYText}" Watermark="水印Y坐标" />
+                        <Button Content="添加水印" Command="{Binding AddWatermarkCommand}" HorizontalAlignment="Stretch" />
+                    </StackPanel>
+                </HeaderedContentControl>
+
+                <!-- 裁剪设置 -->
+                <HeaderedContentControl Header="裁剪设置">
+                    <StackPanel Spacing="10" Margin="5">
+                        <TextBox Text="{Binding CropWidthText}" Watermark="裁剪宽度" />
+                        <TextBox Text="{Binding CropHeightText}" Watermark="裁剪高度" />
+                        <TextBox Text="{Binding CropXText}" Watermark="裁剪X坐标" />
+                        <TextBox Text="{Binding CropYText}" Watermark="裁剪Y坐标" />
+                        <Button Content="裁剪视频" Command="{Binding CropVideoCommand}" HorizontalAlignment="Stretch" />
+                        <Button Content="裁剪并添加水印" Command="{Binding CropAndAddWatermarkCommand}" HorizontalAlignment="Stretch" />
+                    </StackPanel>
+                </HeaderedContentControl>
+            </StackPanel>
+        </Grid>
+
+        <!-- 底部状态栏 -->
+        <Grid Grid.Row="2" RowDefinitions="Auto,Auto" Margin="10" IsVisible="{Binding IsProcessing}">
+            <ProgressBar Grid.Row="0" Value="{Binding ProcessingProgress}" IsVisible="{Binding IsProgressVisible}" Height="20" />
+            <TextBlock Grid.Row="1" Text="{Binding ProcessingStatus}" IsVisible="{Binding IsStatusVisible}" Margin="0,5,0,0" />
+        </Grid>
+    </Grid>
+</Window>
