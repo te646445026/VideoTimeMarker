@@ -2,6 +2,7 @@ using System;
 using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
+using System.IO;
 
 namespace VideoTimeMarker.Services
 {
@@ -118,13 +119,20 @@ namespace VideoTimeMarker.Services
         /// <returns>视频时长</returns>
         private async Task<TimeSpan> GetVideoDurationAsync(string inputFile)
         {
+            var ffprobePath = Path.Combine(Path.GetDirectoryName(FFmpegConfig.FFmpegPath) ?? string.Empty, "ffprobe.exe");
+            if (!File.Exists(ffprobePath))
+            {
+                throw new FileNotFoundException("找不到ffprobe.exe，请确保它与ffmpeg.exe在同一目录下。");
+            }
+
             var process = new Process
             {
                 StartInfo = new ProcessStartInfo
                 {
-                    FileName = FFmpegConfig.FFmpegPath,
-                    Arguments = $"-i \"{inputFile}\"",
+                    FileName = ffprobePath,
+                    Arguments = $"-v error -show_entries format=duration -of default=noprint_wrappers=1:nokey=1 \"{inputFile}\"",
                     UseShellExecute = false,
+                    RedirectStandardOutput = true,
                     RedirectStandardError = true,
                     CreateNoWindow = true
                 }
@@ -133,26 +141,25 @@ namespace VideoTimeMarker.Services
             try
             {
                 process.Start();
-                var output = await process.StandardError.ReadToEndAsync();
-                process.WaitForExit();
+                var output = await process.StandardOutput.ReadToEndAsync();
+                var error = await process.StandardError.ReadToEndAsync();
+                await process.WaitForExitAsync();
 
-                // 解析FFmpeg输出以获取视频时长
-                var durationMatch = System.Text.RegularExpressions.Regex.Match(output, @"Duration:\s*(\d+):(\d+):(\d+)\.(\d+)");
-                if (durationMatch.Success)
+                if (process.ExitCode != 0)
                 {
-                    var hours = int.Parse(durationMatch.Groups[1].Value);
-                    var minutes = int.Parse(durationMatch.Groups[2].Value);
-                    var seconds = int.Parse(durationMatch.Groups[3].Value);
-                    var milliseconds = int.Parse(durationMatch.Groups[4].Value) * 10; // 转换为毫秒
-
-                    return new TimeSpan(0, hours, minutes, seconds, milliseconds);
+                    throw new Exception($"ffprobe执行失败：{error}");
                 }
 
-                return TimeSpan.Zero;
+                if (double.TryParse(output, out double seconds))
+                {
+                    return TimeSpan.FromSeconds(seconds);
+                }
+
+                throw new Exception("无法解析视频时长信息");
             }
-            catch (Exception ex)
+            catch (Exception ex) when (ex is not FileNotFoundException)
             {
-                throw new Exception($"获取视频信息失败：{ex.Message}");
+                throw new Exception($"获取视频时长失败：{ex.Message}");
             }
         }
 

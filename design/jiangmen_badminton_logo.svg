@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200" viewBox="0 0 200 200">
+  <!-- 背景圆形 -->
+  <circle cx="100" cy="100" r="95" fill="#f0f8ff" stroke="#1a73e8" stroke-width="5"/>
+  
+  <!-- 人打羽毛球图案 -->
+  <g transform="translate(100, 100) scale(0.7)">
+    <!-- 羽毛球 -->
+    <circle cx="25" cy="-30" r="8" fill="white" stroke="#333" stroke-width="1.5"/>
+    <path d="M 25,-30 l 4,3 l 4,2 l 4,1" fill="none" stroke="#4CAF50" stroke-width="1.5"/>
+    <path d="M 25,-30 l 5,1 l 5,0 l 5,-1" fill="none" stroke="#4CAF50" stroke-width="1.5"/>
+    <path d="M 25,-30 l 4,-3 l 4,-2 l 4,-1" fill="none" stroke="#4CAF50" stroke-width="1.5"/>
+    
+    <!-- 人物剪影 -->
+    <!-- 头部 -->
+    <circle cx="0" cy="-20" r="12" fill="#1a73e8"/>
+    
+    <!-- 身体 -->
+    <path d="M 0,-8 L 0,25" stroke="#1a73e8" stroke-width="10" stroke-linecap="round"/>
+    
+    <!-- 左腿 -->
+    <path d="M 0,25 L -15,50" stroke="#1a73e8" stroke-width="8" stroke-linecap="round"/>
+    
+    <!-- 右腿 -->
+    <path d="M 0,25 L 15,50" stroke="#1a73e8" stroke-width="8" stroke-linecap="round"/>
+    
+    <!-- 左臂 -->
+    <path d="M 0,0 L -20,15" stroke="#1a73e8" stroke-width="7" stroke-linecap="round"/>
+    
+    <!-- 右臂（挥拍的手臂） -->
+    <path d="M 0,0 L 20,-15 L 35,-25" stroke="#1a73e8" stroke-width="7" stroke-linecap="round"/>
+    
+    <!-- 球拍 -->
+    <ellipse cx="45" cy="-30" rx="15" ry="20" transform="rotate(-15,45,-30)" fill="none" stroke="#1a73e8" stroke-width="2.5"/>
+    <line x1="35" y1="-25" x2="45" y2="-30" stroke="#1a73e8" stroke-width="3"/>
+    
+    <!-- 球拍网线 -->
+    <path d="M 35,-40 L 55,-20" stroke="#333" stroke-width="0.5" opacity="0.7"/>
+    <path d="M 35,-20 L 55,-40" stroke="#333" stroke-width="0.5" opacity="0.7"/>
+    <path d="M 30,-30 L 60,-30" stroke="#333" stroke-width="0.5" opacity="0.7"/>
+    <path d="M 45,-45 L 45,-15" stroke="#333" stroke-width="0.5" opacity="0.7"/>
+  </g>
+  
+  <!-- 特检院元素 - 检测工具图标 -->
+  <g transform="translate(100, 100) scale(0.25) translate(-20, -120)">
+    <rect x="0" y="0" width="40" height="60" rx="5" fill="#1a73e8" stroke="#0d47a1" stroke-width="2"/>
+    <rect x="10" y="10" width="20" height="30" fill="white"/>
+    <line x1="10" y1="50" x2="30" y2="50" stroke="white" stroke-width="3"/>
+  </g>
+  
+  <!-- 文字 - 上部 -->
+  <path id="textArc" d="M 30,100 A 70,70 0 0,1 170,100" fill="none"/>
+  <text font-family="Arial, sans-serif" font-size="14" font-weight="bold" fill="#1a73e8">
+    <textPath href="#textArc" startOffset="50%" text-anchor="middle">江门特检院</textPath>
+  </text>
+  
+  <!-- 文字 - 下部 -->
+  <path id="textArc2" d="M 170,100 A 70,70 0 0,1 30,100" fill="none"/>
+  <text font-family="Arial, sans-serif" font-size="14" font-weight="bold" fill="#1a73e8">
+    <textPath href="#textArc2" startOffset="50%" text-anchor="middle">羽毛球小组纪念</textPath>
+  </text>
+  
+  <!-- 年份 -->
+  <text x="100" y="140" font-family="Arial, sans-serif" font-size="12" font-weight="bold" fill="#4CAF50" text-anchor="middle">2023</text>
+</svg>
