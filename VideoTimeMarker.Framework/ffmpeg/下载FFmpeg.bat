@@ -1,38 +1,86 @@
 @echo off
+title FFmpeg Download Helper
+
 echo ========================================
-echo VideoTimeMarker.Framework FFmpeg 下载助手
+echo VideoTimeMarker.Framework FFmpeg Helper
 echo ========================================
 echo.
-echo 此脚本将帮助您下载FFmpeg可执行文件
+echo This script will help you download FFmpeg files.
 echo.
-echo 请按照以下步骤操作：
+echo Steps to follow:
 echo.
-echo 1. 访问 FFmpeg 官方下载页面：
+echo 1. Visit FFmpeg download page:
 echo    https://www.gyan.dev/ffmpeg/builds/
 echo.
-echo 2. 下载 "release builds" 中的 "ffmpeg-release-essentials.zip"
+echo 2. Download "ffmpeg-release-essentials.zip" from "release builds"
 echo.
-echo 3. 解压下载的文件
+echo 3. Extract the downloaded file
 echo.
-echo 4. 从解压后的 bin 文件夹中复制以下文件到当前目录：
+echo 4. Copy these files from the bin folder to this directory:
 echo    - ffmpeg.exe
 echo    - ffprobe.exe
 echo.
-echo 5. 复制完成后，您可以运行 VideoTimeMarker.Framework 应用程序
+echo 5. After copying, you can run VideoTimeMarker.Framework
 echo.
 echo ========================================
 echo.
-echo 是否要打开下载页面？(Y/N)
-set /p choice=请输入您的选择: 
 
-if /i "%choice%"=="Y" (
-    start https://www.gyan.dev/ffmpeg/builds/
-    echo 已打开下载页面，请按照上述步骤下载文件
+:menu
+echo Choose an option:
+echo [1] Open download page
+echo [2] Check current files
+echo [3] Exit
+echo.
+set /p choice=Enter your choice (1-3): 
+
+if "%choice%"=="1" goto open_page
+if "%choice%"=="2" goto check_files
+if "%choice%"=="3" goto exit
+echo Invalid choice. Please enter 1, 2, or 3.
+echo.
+goto menu
+
+:open_page
+echo.
+echo Opening download page...
+start "" "https://www.gyan.dev/ffmpeg/builds/"
+echo Download page opened. Please follow the steps above.
+echo.
+goto menu
+
+:check_files
+echo.
+echo Checking FFmpeg files in current folder...
+if exist "ffmpeg.exe" (
+    echo [OK] ffmpeg.exe found
 ) else (
-    echo 请手动访问上述网址下载FFmpeg文件
+    echo [MISSING] ffmpeg.exe not found
 )
 
+if exist "ffprobe.exe" (
+    echo [OK] ffprobe.exe found
+) else (
+    echo [MISSING] ffprobe.exe not found
+)
+
+if exist "ffmpeg.exe" if exist "ffprobe.exe" (
+    echo.
+    echo Great! All required FFmpeg files are present.
+    echo You can now run VideoTimeMarker.Framework application.
+) else (
+    echo.
+    echo Please download the missing files and place them in this folder.
+)
 echo.
-echo 下载完成后，请将 ffmpeg.exe 和 ffprobe.exe 放置在此文件夹中
+goto menu
+
+:exit
 echo.
-pause
+echo After downloading, place these files in this folder:
+echo - ffmpeg.exe
+echo - ffprobe.exe
+echo.
+echo Then you can use VideoTimeMarker.Framework normally!
+echo.
+echo Press any key to exit...
+pause >nul
