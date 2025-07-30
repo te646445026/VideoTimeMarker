@@ -1,0 +1,147 @@
+<Window x:Class="VideoTimeMarker.Framework.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="视频水印工具 - Framework版" Height="600" Width="1000"
+        WindowStartupLocation="CenterScreen">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="6*"/>
+            <ColumnDefinition Width="4*"/>
+        </Grid.ColumnDefinitions>
+
+        <!-- 左侧：视频预览区域 -->
+        <Grid Grid.Column="0" Margin="5">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <!-- 视频播放器 -->
+            <Border Grid.Row="0" BorderBrush="Gray" BorderThickness="1" Margin="0,0,0,10">
+                <Grid>
+                    <MediaElement x:Name="VideoPlayer" LoadedBehavior="Manual" Stretch="Uniform" 
+                                  Source="{Binding SelectedVideoPath}" MediaFailed="VideoPlayer_MediaFailed"/>
+                    <Canvas x:Name="SelectionCanvas" Background="Transparent" 
+                            MouseLeftButtonDown="OnCanvasMouseLeftButtonDown"
+                            MouseMove="OnCanvasMouseMove" 
+                            MouseLeftButtonUp="OnCanvasMouseLeftButtonUp">
+                        <Rectangle x:Name="SelectionRectangle" Stroke="Red" StrokeThickness="2" Fill="#30FF0000" 
+                                   Visibility="Collapsed"/>
+                    </Canvas>
+                </Grid>
+            </Border>
+
+            <!-- 播放控制 -->
+            <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Center">
+                <Button x:Name="PlayButton" Content="播放" Width="60" Height="30" Margin="5,0"
+                        Command="{Binding PlayVideoCommand}"/>
+                <Button x:Name="PauseButton" Content="暂停" Width="60" Height="30" Margin="5,0"
+                        Command="{Binding PauseVideoCommand}"/>
+                <Button x:Name="StopButton" Content="停止" Width="60" Height="30" Margin="5,0"
+                        Command="{Binding StopVideoCommand}"/>
+                <Separator Width="1" Margin="10,5" VerticalAlignment="Stretch"/>
+                <Button Content="裁剪并添加水印" Width="120" Height="30" Margin="5,0"
+                        Command="{Binding CropAndAddWatermarkCommand}"/>
+            </StackPanel>
+        </Grid>
+
+        <!-- 右侧：控制面板 -->
+        <ScrollViewer Grid.Column="1" VerticalScrollBarVisibility="Auto" Margin="0,5,5,5">
+            <StackPanel>
+                <!-- 文件选择 -->
+                <GroupBox Header="视频文件" Margin="0,0,0,10">
+                    <StackPanel>
+                        <TextBox x:Name="FilePathTextBox" IsReadOnly="True" Margin="0,0,0,8"
+                                 Text="{Binding FilePathText}" ToolTip="视频文件路径"/>
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                            <Button Content="选择视频" Width="80" Height="28" Margin="0,0,8,0"
+                                    Command="{Binding SelectVideoCommand}"/>
+                            <Button Content="打开文件夹" Width="80" Height="28"
+                                    Command="{Binding OpenOutputFolderCommand}"/>
+                        </StackPanel>
+                    </StackPanel>
+                </GroupBox>
+
+                <!-- 水印设置 -->
+                <GroupBox Header="水印设置" Margin="0,0,0,10">
+                    <StackPanel>
+                        <!-- 时间设置 -->
+                        <Label Content="时间设置" FontWeight="Bold"/>
+                        <DatePicker x:Name="StartDatePicker" Margin="0,0,0,8"
+                                    SelectedDate="{Binding SelectedDate}"/>
+                        <TextBox x:Name="StartTimePicker" Margin="0,0,0,16"
+                                 Text="{Binding StartTime}" ToolTip="时间格式: HH:mm:ss"/>
+
+                        <!-- 水印样式 -->
+                        <Label Content="水印样式" FontWeight="Bold"/>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBox x:Name="FontSizeTextBox" Grid.Column="0" Margin="0,0,4,0"
+                                     Text="{Binding FontSizeText}" ToolTip="字体大小"/>
+                            <TextBox x:Name="WatermarkXTextBox" Grid.Column="1" Margin="4,0"
+                                     Text="{Binding WatermarkXText}" ToolTip="X坐标"/>
+                            <TextBox x:Name="WatermarkYTextBox" Grid.Column="2" Margin="4,0,0,0"
+                                     Text="{Binding WatermarkYText}" ToolTip="Y坐标"/>
+                        </Grid>
+
+                        <!-- 操作按钮 -->
+                        <Button Content="添加水印" Width="80" Height="28" Margin="0,16,0,0"
+                                HorizontalAlignment="Right"
+                                Command="{Binding AddWatermarkCommand}"/>
+                    </StackPanel>
+                </GroupBox>
+
+                <!-- 裁剪设置 -->
+                <GroupBox Header="裁剪设置" Margin="0,0,0,10">
+                    <StackPanel>
+                        <!-- 裁剪尺寸 -->
+                        <Label Content="裁剪尺寸" FontWeight="Bold"/>
+                        <Grid Margin="0,0,0,8">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBox x:Name="CropWidthTextBox" Grid.Column="0" Margin="0,0,4,0"
+                                     Text="{Binding CropWidthText}" ToolTip="裁剪宽度"/>
+                            <TextBox x:Name="CropHeightTextBox" Grid.Column="1" Margin="4,0,0,0"
+                                     Text="{Binding CropHeightText}" ToolTip="裁剪高度"/>
+                        </Grid>
+
+                        <!-- 裁剪位置 -->
+                        <Label Content="裁剪位置" FontWeight="Bold"/>
+                        <Grid Margin="0,0,0,16">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBox x:Name="CropXTextBox" Grid.Column="0" Margin="0,0,4,0"
+                                     Text="{Binding CropXText}" ToolTip="裁剪X坐标"/>
+                            <TextBox x:Name="CropYTextBox" Grid.Column="1" Margin="4,0,0,0"
+                                     Text="{Binding CropYText}" ToolTip="裁剪Y坐标"/>
+                        </Grid>
+
+                        <!-- 操作按钮 -->
+                        <Button Content="裁剪视频" Width="80" Height="28"
+                                HorizontalAlignment="Right"
+                                Command="{Binding CropVideoCommand}"/>
+                    </StackPanel>
+                </GroupBox>
+
+                <!-- 进度条 -->
+                <GroupBox Header="处理进度">
+                    <StackPanel>
+                        <ProgressBar x:Name="ProcessingProgressBar" Height="20" 
+                                     Visibility="Collapsed"/>
+                        <TextBlock x:Name="ProcessingStatusText" 
+                                   HorizontalAlignment="Center" Margin="0,8,0,0"
+                                   Visibility="Collapsed"/>
+                    </StackPanel>
+                </GroupBox>
+            </StackPanel>
+        </ScrollViewer>
+    </Grid>
+</Window>
