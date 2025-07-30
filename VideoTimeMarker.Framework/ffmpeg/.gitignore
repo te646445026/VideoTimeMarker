@@ -1,0 +1,14 @@
+# 忽略FFmpeg可执行文件
+# 这些文件通常很大，不适合提交到版本控制系统
+
+# FFmpeg可执行文件
+ffmpeg.exe
+ffprobe.exe
+
+# 其他可能的FFmpeg相关文件
+*.dll
+*.lib
+
+# 但保留说明文件
+!README.md
+!.gitignore

@@ -6,6 +6,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VideoTimeMarker", "VideoTim
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VideoTimeMarker.Avalonia", "VideoTimeMarker.Avalonia\VideoTimeMarker.Avalonia.csproj", "{87654321-4321-4321-4321-210987654321}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VideoTimeMarker.Framework", "VideoTimeMarker.Framework\VideoTimeMarker.Framework.csproj", "{E49CD92E-3915-DC42-639D-DEFD1990EC42}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -20,6 +22,10 @@ Global
 		{87654321-4321-4321-4321-210987654321}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{87654321-4321-4321-4321-210987654321}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{87654321-4321-4321-4321-210987654321}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E49CD92E-3915-DC42-639D-DEFD1990EC42}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E49CD92E-3915-DC42-639D-DEFD1990EC42}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E49CD92E-3915-DC42-639D-DEFD1990EC42}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E49CD92E-3915-DC42-639D-DEFD1990EC42}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

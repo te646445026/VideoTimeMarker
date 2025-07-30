@@ -10,9 +10,13 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="FFmpeg\" />
     <Folder Include="Resources\Images\" />
     <Folder Include="Resources\Styles\" />
+  </ItemGroup>
+
+  <!-- 复制ffmpeg文件夹到输出目录 -->
+  <ItemGroup>
+    <None Include="ffmpeg\**\*" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 
 </Project>

@@ -22,6 +22,12 @@ namespace VideoTimeMarker.Framework
             DataContext = _viewModel;
 
             VideoPlayer.MediaOpened += VideoPlayer_MediaOpened;
+            
+            // 订阅ViewModel的播放控制事件
+            _viewModel.RequestPlayVideo += () => VideoPlayer.Play();
+            _viewModel.RequestPauseVideo += () => VideoPlayer.Pause();
+            _viewModel.RequestStopVideo += () => VideoPlayer.Stop();
+            
             _viewModel.PropertyChanged += (s, e) =>
             {
                 if (e.PropertyName == nameof(MainWindowViewModel.SelectedVideoPath) && _viewModel.SelectedVideoPath != null)

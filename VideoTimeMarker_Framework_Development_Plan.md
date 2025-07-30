@@ -215,6 +215,7 @@ public class RelayCommand : ICommand
   - ✅ 视频裁剪功能
   - ✅ 裁剪+水印组合功能
   - ✅ 进度监控和状态反馈
+  - ✅ FFmpeg文件检查和用户提示
 - ✅ 主窗口UI完成
   - ✅ 视频选择和预览
   - ✅ 裁剪区域选择
@@ -229,6 +230,13 @@ public class RelayCommand : ICommand
 - ✅ C# 7.3语法兼容性修复
 - ✅ .NET Framework 4.7.2兼容性确认
 - ✅ 项目成功编译和运行
+
+#### 4. FFmpeg集成和部署
+- ✅ FFmpeg文件夹结构建立
+- ✅ 构建时文件复制配置
+- ✅ 应用启动时FFmpeg文件检查
+- ✅ 用户友好的缺失文件提示
+- ✅ FFmpeg下载指导文档和脚本
 
 ### 🔄 当前进行中的工作
 
