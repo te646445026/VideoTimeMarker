@@ -7,27 +7,31 @@ echo ========================================
 echo.
 echo This script will help you download FFmpeg files.
 echo.
+echo IMPORTANT:
+echo   Use FFmpeg 4.4.1 for Windows 7 compatibility.
+echo   FFmpeg 7.x and later do NOT support Windows 7.
+echo   If your Windows 7 is 32-bit, you must find a
+echo   32-bit (x86) FFmpeg 4.x build yourself.
+echo.
 echo Steps to follow:
 echo.
-echo 1. Visit FFmpeg download page:
-echo    https://www.gyan.dev/ffmpeg/builds/
+echo 1. Download FFmpeg 4.4.1 (64-bit) directly:
+echo    https://github.com/GyanD/codexffmpeg/releases/download/4.4.1/ffmpeg-4.4.1-full_build.zip
 echo.
-echo 2. Download "ffmpeg-release-essentials.zip" from "release builds"
+echo 2. Extract the downloaded file
 echo.
-echo 3. Extract the downloaded file
-echo.
-echo 4. Copy these files from the bin folder to this directory:
+echo 3. Copy these files from the bin folder to this directory:
 echo    - ffmpeg.exe
 echo    - ffprobe.exe
 echo.
-echo 5. After copying, you can run VideoTimeMarker.Framework
+echo 4. After copying, you can run VideoTimeMarker.Framework
 echo.
 echo ========================================
 echo.
 
 :menu
 echo Choose an option:
-echo [1] Open download page
+echo [1] Download FFmpeg 4.4.1 (open download link)
 echo [2] Check current files
 echo [3] Exit
 echo.
@@ -42,9 +46,9 @@ goto menu
 
 :open_page
 echo.
-echo Opening download page...
-start "" "https://www.gyan.dev/ffmpeg/builds/"
-echo Download page opened. Please follow the steps above.
+echo Opening FFmpeg 4.4.1 download link (Win7 compatible)...
+start "" "https://github.com/GyanD/codexffmpeg/releases/download/4.4.1/ffmpeg-4.4.1-full_build.zip"
+echo Download started. Please follow the steps above.
 echo.
 goto menu
 

@@ -361,3 +361,7 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+
+# Win7 发布包（构建产物）
+VideoTimeMarker.Framework.Win7.Package/
+VideoTimeMarker.Framework.Win7.zip

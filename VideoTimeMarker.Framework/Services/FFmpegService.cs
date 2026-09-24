@@ -53,7 +53,7 @@ namespace VideoTimeMarker.Framework.Services
             var totalSeconds = durationInfo.TotalSeconds;
 
             // 构建FFmpeg命令，使用drawtext filter添加动态时间水印
-            var command = $"-i \"{inputFile}\" -vf \"drawtext=fontfile=arial.ttf:fontsize={fontSize}:fontcolor=red:" +
+            var command = $"-i \"{inputFile}\" -vf \"drawtext=fontfile={GetDrawTextFontFile()}:fontsize={fontSize}:fontcolor=red:" +
                 $"text='%{{pts\\:localtime\\:{new DateTimeOffset(startTime).ToUnixTimeSeconds()}}}'" +
                 $":x={x}:y={y}\" -c:a copy \"{outputFile}\"";
 
@@ -111,13 +111,30 @@ namespace VideoTimeMarker.Framework.Services
             }
             
             // 构建FFmpeg命令，使用复合滤镜同时完成裁剪和添加水印
-            var command = $"-i \"{inputFile}\" -vf \"crop={width}:{height}:{x}:{y},drawtext=fontfile=arial.ttf:fontsize={fontSize}:fontcolor=red:" +
+            var command = $"-i \"{inputFile}\" -vf \"crop={width}:{height}:{x}:{y},drawtext=fontfile={GetDrawTextFontFile()}:fontsize={fontSize}:fontcolor=red:" +
                 $"text='%{{pts\\:localtime\\:{new DateTimeOffset(startTime).ToUnixTimeSeconds()}}}'" +
                 $":x={watermarkX}:y={watermarkY}\" -c:a copy \"{outputFile}\"";
 
             OnProgressChanged(0, "开始裁剪视频并添加水印...");
             
             return await ExecuteCommandAsync(inputFile, command);
+        }
+
+        /// <summary>
+        /// 获取drawtext滤镜使用的字体文件参数
+        /// Windows路径中的冒号在滤镜参数里需要转义为 \:
+        /// </summary>
+        private static string GetDrawTextFontFile()
+        {
+            var fontsDir = Environment.GetFolderPath(Environment.SpecialFolder.Fonts);
+            var fontPath = Path.Combine(fontsDir, "arial.ttf");
+
+            if (!File.Exists(fontPath))
+            {
+                throw new FileNotFoundException($"找不到字体文件：{fontPath}，无法渲染时间水印。");
+            }
+
+            return fontPath.Replace("\\", "/").Replace(":", "\\:");
         }
 
         /// <summary>
