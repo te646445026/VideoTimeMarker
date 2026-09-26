@@ -160,6 +160,12 @@ namespace VideoTimeMarker.Framework
                     _viewModel.CropYText = originalY.ToString();
                     _viewModel.CropWidthText = originalWidth.ToString();
                     _viewModel.CropHeightText = originalHeight.ToString();
+
+                    // 同步填充去水印区域参数
+                    _viewModel.RmXText = originalX.ToString();
+                    _viewModel.RmYText = originalY.ToString();
+                    _viewModel.RmWidthText = originalWidth.ToString();
+                    _viewModel.RmHeightText = originalHeight.ToString();
                 }
                 else
                 {
@@ -168,6 +174,12 @@ namespace VideoTimeMarker.Framework
                     _viewModel.CropYText = ((int)relativeY).ToString();
                     _viewModel.CropWidthText = ((int)width).ToString();
                     _viewModel.CropHeightText = ((int)height).ToString();
+
+                    // 同步填充去水印区域参数
+                    _viewModel.RmXText = ((int)relativeX).ToString();
+                    _viewModel.RmYText = ((int)relativeY).ToString();
+                    _viewModel.RmWidthText = ((int)width).ToString();
+                    _viewModel.RmHeightText = ((int)height).ToString();
                 }
             }
         }

@@ -131,6 +131,39 @@
                     </StackPanel>
                 </GroupBox>
 
+                <!-- 去水印设置 -->
+                <GroupBox Header="去水印设置" Margin="0,0,0,10">
+                    <StackPanel>
+                        <Label Content="去水印区域（在视频上框选自动填充）" FontWeight="Bold"/>
+                        <Grid Margin="0,0,0,8">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBox x:Name="RmXTextBox" Grid.Column="0" Margin="0,0,4,0"
+                                     Text="{Binding RmXText}" ToolTip="去水印区域X坐标"/>
+                            <TextBox x:Name="RmYTextBox" Grid.Column="1" Margin="4,0,0,0"
+                                     Text="{Binding RmYText}" ToolTip="去水印区域Y坐标"/>
+                        </Grid>
+                        <Grid Margin="0,0,0,16">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBox x:Name="RmWidthTextBox" Grid.Column="0" Margin="0,0,4,0"
+                                     Text="{Binding RmWidthText}" ToolTip="去水印区域宽度"/>
+                            <TextBox x:Name="RmHeightTextBox" Grid.Column="1" Margin="4,0,0,0"
+                                     Text="{Binding RmHeightText}" ToolTip="去水印区域高度"/>
+                        </Grid>
+
+                        <!-- 操作按钮 -->
+                        <Button Content="一键去水印并加新水印" Width="140" Height="28"
+                                HorizontalAlignment="Right"
+                                Command="{Binding RemoveWatermarkAndAddTimeCommand}"
+                                ToolTip="框选旧水印区域后点击，新水印自动盖在原位置，字号自适应"/>
+                    </StackPanel>
+                </GroupBox>
+
                 <!-- 进度条 -->
                 <GroupBox Header="处理进度">
                     <StackPanel>

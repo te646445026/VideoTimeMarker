@@ -31,6 +31,10 @@ namespace VideoTimeMarker.Framework.ViewModels
         private string _cropHeightText;
         private string _cropXText;
         private string _cropYText;
+        private string _rmXText;
+        private string _rmYText;
+        private string _rmWidthText;
+        private string _rmHeightText;
 
         public string SelectedVideoPath
         {
@@ -134,6 +138,30 @@ namespace VideoTimeMarker.Framework.ViewModels
             set => SetProperty(ref _cropYText, value);
         }
 
+        public string RmXText
+        {
+            get => _rmXText;
+            set => SetProperty(ref _rmXText, value);
+        }
+
+        public string RmYText
+        {
+            get => _rmYText;
+            set => SetProperty(ref _rmYText, value);
+        }
+
+        public string RmWidthText
+        {
+            get => _rmWidthText;
+            set => SetProperty(ref _rmWidthText, value);
+        }
+
+        public string RmHeightText
+        {
+            get => _rmHeightText;
+            set => SetProperty(ref _rmHeightText, value);
+        }
+
         public RelayCommand SelectVideoCommand { get; }
         public RelayCommand PlayVideoCommand { get; }
         public RelayCommand PauseVideoCommand { get; }
@@ -141,6 +169,7 @@ namespace VideoTimeMarker.Framework.ViewModels
         public RelayCommand AddWatermarkCommand { get; }
         public RelayCommand CropVideoCommand { get; }
         public RelayCommand CropAndAddWatermarkCommand { get; }
+        public RelayCommand RemoveWatermarkAndAddTimeCommand { get; }
         public RelayCommand OpenOutputFolderCommand { get; }
 
         public event Action RequestPlayVideo;
@@ -159,6 +188,7 @@ namespace VideoTimeMarker.Framework.ViewModels
             AddWatermarkCommand = new RelayCommand(async param => await AddWatermarkAsync());
             CropVideoCommand = new RelayCommand(async param => await CropVideoAsync());
             CropAndAddWatermarkCommand = new RelayCommand(async param => await CropAndAddWatermarkAsync());
+            RemoveWatermarkAndAddTimeCommand = new RelayCommand(async param => await RemoveWatermarkAndAddTimeAsync());
             OpenOutputFolderCommand = new RelayCommand(param => OpenOutputFolder());
         }
 
@@ -455,6 +485,89 @@ namespace VideoTimeMarker.Framework.ViewModels
                 else
                 {
                     MessageBox.Show("视频裁剪并添加水印失败", "错误", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+            }
+            catch (Exception ex)
+            {
+                IsProcessing = false;
+                ProcessingProgressVisibility = Visibility.Collapsed;
+                ProcessingStatusVisibility = Visibility.Collapsed;
+                MessageBox.Show($"处理过程中发生错误：{ex.Message}", "错误", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+        private async Task RemoveWatermarkAndAddTimeAsync()
+        {
+            if (string.IsNullOrEmpty(SelectedVideoPath))
+            {
+                MessageBox.Show("请先选择视频文件", "提示", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
+            if (!int.TryParse(RmXText, out var rmX) || rmX < 0 ||
+                !int.TryParse(RmYText, out var rmY) || rmY < 0 ||
+                !int.TryParse(RmWidthText, out var rmWidth) || rmWidth <= 0 ||
+                !int.TryParse(RmHeightText, out var rmHeight) || rmHeight <= 0)
+            {
+                MessageBox.Show("请先在视频上框选旧水印区域", "提示", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
+            if (!DateTime.TryParse(StartTime, out var time) || SelectedDate == null)
+            {
+                MessageBox.Show("请输入有效的时间格式", "提示", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
+            // 其余参数自动推导：新水印盖在框选区域左上角，字号按区域高度自适应
+            var fontSize = Math.Min(120, Math.Max(12, (int)Math.Round(rmHeight * 0.75)));
+            var watermarkX = Math.Max(8, rmX);
+            var watermarkY = Math.Max(6, rmY);
+
+            var startTime = SelectedDate.Add(time.TimeOfDay);
+            var outputPath = Path.Combine(
+                Path.GetDirectoryName(SelectedVideoPath) ?? string.Empty,
+                $"{Path.GetFileNameWithoutExtension(SelectedVideoPath)}{Path.GetExtension(SelectedVideoPath)}"
+            );
+
+            if (IsProcessing)
+            {
+                MessageBox.Show("正在处理中，请等待...", "提示", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
+            try
+            {
+                IsProcessing = true;
+                ProcessingProgressVisibility = Visibility.Visible;
+                ProcessingStatusVisibility = Visibility.Visible;
+                ProcessingProgress = 0;
+
+                var result = await _ffmpegService.RemoveWatermarkAndAddTime(
+                    SelectedVideoPath,
+                    outputPath,
+                    rmX,
+                    rmY,
+                    rmWidth,
+                    rmHeight,
+                    startTime,
+                    VideoDuration,
+                    fontSize,
+                    watermarkX,
+                    watermarkY
+                );
+
+                IsProcessing = false;
+                ProcessingProgressVisibility = Visibility.Collapsed;
+                ProcessingStatusVisibility = Visibility.Collapsed;
+
+                if (result == 0)
+                {
+                    MessageBox.Show("去除原水印并添加新水印成功！", "成功", MessageBoxButton.OK, MessageBoxImage.Information);
+                }
+                else
+                {
+                    MessageBox.Show("去除原水印并添加新水印失败", "错误", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
             }
             catch (Exception ex)

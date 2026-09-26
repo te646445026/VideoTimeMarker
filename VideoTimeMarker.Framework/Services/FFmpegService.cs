@@ -121,8 +121,47 @@ namespace VideoTimeMarker.Framework.Services
         }
 
         /// <summary>
+        /// 去除原视频水印区域并在指定位置添加新的动态时间水印
+        /// </summary>
+        public async Task<int> RemoveWatermarkAndAddTime(string inputFile, string outputFile, int delogoX, int delogoY, int delogoWidth, int delogoHeight, DateTime startTime, TimeSpan duration, int fontSize = 40, int watermarkX = 18, int watermarkY = 18)
+        {
+            // 修改输出文件名，添加去水印和时间戳信息
+            var fileInfo = new FileInfo(outputFile);
+            var directory = fileInfo.DirectoryName;
+            var fileNameWithoutExt = Path.GetFileNameWithoutExtension(outputFile);
+            var extension = fileInfo.Extension;
+            var timeStamp = startTime.ToString("yyyyMMdd_HHmmss");
+            outputFile = Path.Combine(directory ?? string.Empty, $"{fileNameWithoutExt}_rmwm_{timeStamp}{extension}");
+
+            // delogo需要区域四周留出像素做插值，越界时收拢区域
+            var videoInfo = await GetVideoInfoAsync(inputFile);
+            if (videoInfo.IsValid)
+            {
+                delogoX = Math.Max(1, delogoX);
+                delogoY = Math.Max(1, delogoY);
+                delogoWidth = Math.Min(delogoWidth, videoInfo.Width - 1 - delogoX);
+                delogoHeight = Math.Min(delogoHeight, videoInfo.Height - 1 - delogoY);
+
+                if (delogoWidth <= 0 || delogoHeight <= 0)
+                {
+                    throw new Exception("去水印区域超出视频画面范围，请调整区域坐标和尺寸");
+                }
+            }
+
+            // 构建FFmpeg命令，delogo滤镜用周边像素插值修复水印区域，随后drawtext叠加新时间水印
+            var command = $"-y -i \"{inputFile}\" -vf \"delogo=x={delogoX}:y={delogoY}:w={delogoWidth}:h={delogoHeight}," +
+                $"drawtext=fontfile={GetDrawTextFontFile()}:fontsize={fontSize}:fontcolor=red:" +
+                $"text='%{{pts\\:localtime\\:{new DateTimeOffset(startTime).ToUnixTimeSeconds()}}}'" +
+                $":x={watermarkX}:y={watermarkY}\" -c:a copy \"{outputFile}\"";
+
+            OnProgressChanged(0, "开始去除水印并添加新水印...");
+
+            return await ExecuteCommandAsync(inputFile, command);
+        }
+
+        /// <summary>
         /// 获取drawtext滤镜使用的字体文件参数
-        /// Windows路径中的冒号在滤镜参数里需要转义为 \:
+        /// 路径用正斜杠、冒号转义为 \: 并加单引号包裹，兼容ffmpeg滤镜两级解析
         /// </summary>
         private static string GetDrawTextFontFile()
         {
@@ -134,7 +173,7 @@ namespace VideoTimeMarker.Framework.Services
                 throw new FileNotFoundException($"找不到字体文件：{fontPath}，无法渲染时间水印。");
             }
 
-            return fontPath.Replace("\\", "/").Replace(":", "\\:");
+            return $"'{fontPath.Replace("\\", "/").Replace(":", "\\:")}'";
         }
 
         /// <summary>
@@ -254,6 +293,9 @@ namespace VideoTimeMarker.Framework.Services
 
                 process.Start();
 
+                // 记录FFmpeg输出用于错误诊断
+                var errorOutput = new System.Text.StringBuilder();
+
                 // 异步读取输出
                 var progressTask = Task.Run(async () =>
                 {
@@ -261,6 +303,8 @@ namespace VideoTimeMarker.Framework.Services
                     string line;
                     while ((line = await reader.ReadLineAsync()) != null)
                     {
+                        errorOutput.AppendLine(line);
+
                         // 解析FFmpeg输出以更新进度
                         if (line.Contains("time="))
                         {
@@ -274,7 +318,7 @@ namespace VideoTimeMarker.Framework.Services
                                     int.Parse(timeMatch.Groups[3].Value),
                                     int.Parse(timeMatch.Groups[4].Value) * 10
                                 );
-                                var progress = _videoDuration.TotalSeconds > 0 ? 
+                                var progress = _videoDuration.TotalSeconds > 0 ?
                                     (processedTime.TotalSeconds / _videoDuration.TotalSeconds) * 100 : 0;
                                 OnProgressChanged(progress, $"处理进度：{progress:F1}%");
                             }
@@ -285,6 +329,15 @@ namespace VideoTimeMarker.Framework.Services
                 // 等待进度监控任务和进程完成
                 await progressTask;
                 process.WaitForExit();
+                if (process.ExitCode != 0)
+                {
+                    var detail = errorOutput.ToString();
+                    if (detail.Length > 800)
+                    {
+                        detail = "..." + detail.Substring(detail.Length - 800);
+                    }
+                    throw new Exception($"FFmpeg处理失败（退出码{process.ExitCode}）：{detail}");
+                }
                 return process.ExitCode;
             }
             catch (Exception ex)
